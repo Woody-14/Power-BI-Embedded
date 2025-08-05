@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Power BI Report</title>
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+        }
+        #reportContainer {
+            width: 100vw;
+            height: 100vh;
+        }
+    </style>
+    <!-- Power BI JS SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/powerbi-client@2.19.0/dist/powerbi.min.js"></script>
+</head>
+<body>
+    <div id="reportContainer"></div>
+    <script>
+        // Embed Power BI report and refresh token in background
+        let report;
+        function embedReport() {
+            fetch('http://localhost:5000/getEmbedInfo')
+                .then(response => response.json())
+                .then(data => {
+                    const models = window['powerbi-client'].models;
+                    const embedConfig = {
+                        type: 'report',
+                        id: data.reportId,
+                        embedUrl: data.embedUrl,
+                        accessToken: data.embedToken,
+                        tokenType: models.TokenType.Embed,
+                        settings: {
+                            panes: {
+                                filters: { visible: false },
+                                pageNavigation: { visible: false }
+                            }
+                        }
+                    };
+                    const reportContainer = document.getElementById('reportContainer');
+                    report = window.powerbi.embed(reportContainer, embedConfig);
+                })
+                .catch(error => {
+                    document.getElementById('reportContainer').innerText = 'Failed to load report.';
+                    console.error(error);
+                });
+        }
+
+        // Initial embed
+        embedReport();
+
+        // Refresh token every 50 minutes (token valid for 60 min)
+        setInterval(() => {
+            fetch('http://localhost:5000/getEmbedInfo')
+                .then(response => response.json())
+                .then(data => {
+                    if (report) {
+                        report.setAccessToken(data.embedToken);
+                    }
+                })
+                .catch(error => {
+                    console.error('Failed to refresh token:', error);
+                });
+        }, 50 * 60 * 1000); // 50 minutes
+    </script>
+</body>
+</html>
