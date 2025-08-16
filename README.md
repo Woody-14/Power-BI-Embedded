@@ -8,13 +8,13 @@
 3. **Setup your virtual environment:**
    - Open a terminal in the project directory and run:
      ```powershell
-     python -m venv .venv
+         python3 -m venv .venv
      ```
 
 4. **Activate your new virtual environment:**
    - Open a terminal in the project directory and run:
      ```powershell
-     .venv\Scripts\activate
+         source .venv/bin/activate
      ```
 
 5. **Install required Python packages:**
@@ -41,7 +41,7 @@ The app will not run unless `config.ini` is present and filled out.
 7. **Start the Flask backend (port 5000):**
    - In your terminal, run:
      ```powershell
-     python app.py
+     python3 app.py
      ```
 8. **Start a new terminal window:**
    - In VS Code, go to "Terminal" then select "New Terminal"
@@ -49,7 +49,7 @@ The app will not run unless `config.ini` is present and filled out.
 9. **Start the static HTTP server (port 8000):**
    - In a new terminal window, run:
      ```powershell
-     python -m http.server 8000
+     python3 -m http.server 8000
      ```
    - Make sure you are in the directory containing `embed_powerbi_report.html`.
 
